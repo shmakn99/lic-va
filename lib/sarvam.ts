@@ -1,6 +1,6 @@
 import { ApiError } from "./http";
 export const settings = () => ({
-  chat: process.env.SARVAM_CHAT_MODEL || "sarvam-105b",
+  chat: process.env.SARVAM_CHAT_MODEL || "sarvam-105b-conversations",
   stt: process.env.SARVAM_STT_MODEL || "saaras:v4",
   tts: process.env.SARVAM_TTS_MODEL || "bulbul:v3",
   voice: process.env.SARVAM_VOICE || "shubh",

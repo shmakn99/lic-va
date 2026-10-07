@@ -12,8 +12,8 @@ export function parseAnswer(raw: string, sources: Source[]): Answer {
   const allowed = new Set(sources.map((s) => s.id));
   if (answer.sourceIds.some((id) => !allowed.has(id)))
     throw new Error("Invalid source ID");
-  if (answer.kind === "answer" && !answer.sourceIds.length)
-    throw new Error("Missing source");
+  // General insurance explanations need no product citation. The prompt requires
+  // supporting sources for product claims; this parser checks IDs, not meaning.
   return { ...answer, sourceIds: [...new Set(answer.sourceIds)] };
 }
 export const answerJsonSchema = {

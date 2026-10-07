@@ -22,7 +22,7 @@ Set these in Vercel before deploying. Configure Production and, if preview deplo
 | Variable | Required | Default / purpose |
 | --- | --- | --- |
 | `SARVAM_API_KEY` | Yes for live features | Server-only Sarvam credential with model access and credits |
-| `SARVAM_CHAT_MODEL` | No | `sarvam-105b` |
+| `SARVAM_CHAT_MODEL` | No | `sarvam-105b-conversations` |
 | `SARVAM_STT_MODEL` | No | `saaras:v4` |
 | `SARVAM_TTS_MODEL` | No | `bulbul:v3` |
 | `SARVAM_VOICE` | No | `shubh` |

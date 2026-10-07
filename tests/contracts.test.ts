@@ -35,11 +35,12 @@ test("oversized recordings are rejected before an upload can reach the hosting l
   );
 });
 
-test("rejects invented, cross-plan, missing citations and malformed answers", async () => {
+test("rejects invented and cross-plan citations and malformed answers", async () => {
   const { sources } = await loadKnowledge("digi-term");
   for (const input of [
     "not JSON",
-    JSON.stringify({ kind: "answer", text: "Answer", sourceIds: [] }),
+    JSON.stringify({ kind: "answer", text: "Answer", sourceIds: ["invented"] }),
+    JSON.stringify({ kind: "answer", text: "Answer" }),
     JSON.stringify({
       kind: "answer",
       text: "Answer",
@@ -59,6 +60,42 @@ test("rejects invented, cross-plan, missing citations and malformed answers", as
     ).text,
     "No maturity benefit.",
   );
+});
+test("general answers need no product citation or repair in either language or document mode", async () => {
+  const original = globalThis.fetch;
+  const key = process.env.SARVAM_API_KEY;
+  process.env.SARVAM_API_KEY = "test-only";
+  const document = {
+    title: "Example Protect — test fixture",
+    text: "Example Protect provides life cover for 20 years while premiums are paid. There is no maturity benefit on survival to the end of the term.",
+  };
+  let calls = 0;
+  try {
+    for (const language of ["en-IN", "hi-IN"] as const) {
+      for (const suppliedDocument of [undefined, document]) {
+        const text = language === "hi-IN"
+          ? "प्रीमियम बीमा सुरक्षा के लिए दी जाने वाली रकम है।"
+          : "A premium is the amount paid for insurance cover.";
+        globalThis.fetch = async () => {
+          calls++;
+          return Response.json({ choices: [{ message: { content: JSON.stringify({
+            kind: "answer", text, sourceIds: [],
+            ...(suppliedDocument ? { evidence: [] } : {}),
+          }) } }] });
+        };
+        const answer = await chat(chatSchema.parse({
+          planId: "digi-term", language, question: "What is a premium?",
+          document: suppliedDocument,
+        }), AbortSignal.timeout(1000));
+        assert.deepEqual(answer, { kind: "answer", text, sourceIds: [], sources: [] });
+      }
+    }
+    assert.equal(calls, 4);
+  } finally {
+    globalThis.fetch = original;
+    if (key === undefined) delete process.env.SARVAM_API_KEY;
+    else process.env.SARVAM_API_KEY = key;
+  }
 });
 test("all source IDs resolve to selected knowledge and official URLs", async () => {
   const all = new Set();

@@ -45,7 +45,7 @@ The microphone stream is stopped before transcription. MediaRecorder produces a 
 
 | Use           | Setting                                                          |
 | ------------- | ---------------------------------------------------------------- |
-| Chat          | `sarvam-105b`, reasoning disabled, JSON schema response          |
+| Chat          | `sarvam-105b-conversations`, reasoning disabled, JSON schema response |
 | Transcription | `saaras:v4`, transcribe mode, automatic language detection       |
 | Speech        | `bulbul:v3`, `shubh`, pace 1, WAV, 24 kHz                        |
 | Browser input | Completed native MediaRecorder file → normalized MIME → upload |
@@ -58,7 +58,8 @@ Live smoke tests passed for text, English/Hindi TTS and transcription. The brows
 - `content/*.md` contains selected official source passages; `content/sources.json` maps stable source IDs to official documents and PDF pages. Each request loads only the selected plan, or only the supplied custom document.
 - Technical introductions are manually authored in both languages, checked against cited passages and stored in `content/introductions.json`. Simpler introductions, open questions and follow-ups use the live text model with the selected answer style. There is no simulated provider mode or model fallback.
 - Browser-only conversation state; latest six completed exchanges are sent. No accounts, database, vector search, session store or restoration after refresh.
-- Answers are validated for structure, length and selected-plan source IDs. One repair is permitted. Rejected drafts are never displayed or spoken. Hindi answers must contain Devanagari.
+- General insurance concepts may use established model knowledge without product citations. Product facts must still come from the selected passages; mixed answers distinguish the general explanation from documented product details. This distinction is made in the prompt, without another classifier or validator call.
+- Answers are validated for structure, length and selected-plan source IDs. General answers may have empty source IDs; cited custom-document facts still require exact evidence quotes. One repair is permitted. Rejected drafts are never displayed or spoken. Hindi answers must contain Devanagari.
 - Abort controllers and generation counters prevent late answers/audio after reset, plan or language changes. STT plus chat share a 30-second browser budget; TTS has a separate 15-second budget.
 - Questions are limited to 1,200 characters; answers to 2,400; recordings to 4 MiB, with 64 KiB extra allowed for multipart headers. Oversized recordings are rejected before upload, and server request bodies are bounded while reading.
 - Chat failures retain the question with **Retry question**. Audio failures retain the answer with **Retry audio**, without another chat call. Microphone failures retain typing.
@@ -88,7 +89,7 @@ To run an optimized local build: `npm run build`, stop the development server, t
 
 ## Content boundaries
 
-Documents are from the specified UINs, checked on 6 October 2026. This is not a live product catalogue. Questions beyond the curated passages should get an explicit limitation, not invented policy facts. Current loan rates, personal quotes, calculators, tax advice, claim decisions and claim submission procedures are outside the prepared coverage. Digi Term's increasing-cover maximum-term table is explicitly omitted rather than flattened incorrectly.
+Documents are from the specified UINs, checked on 6 October 2026. This is not a live product catalogue. General insurance definitions and category comparisons may be explained even when absent from the passages. Missing product details should get an explicit limitation, while still answering any general educational part; general industry practices must not be presented as the selected plan's terms. Current loan rates, personal quotes, calculators, tax advice, claim decisions and claim submission procedures are outside the prepared coverage. Digi Term's increasing-cover maximum-term table is explicitly omitted rather than flattened incorrectly.
 
 Source IDs are validated; sentence-level factual entailment is not mechanically verified. Short generated answers can omit a qualification, so consult the linked policy documents when exact conditions matter. Do not use the demonstration to decide a purchase or claim.
 

@@ -31,6 +31,7 @@ test("custom answers reject invented quotes, missing evidence and cross-product 
     { ...valid, evidence: [] },
     { ...valid, evidence: [{ sourceId: "DOC-1", quote: "Guaranteed maturity payout" }] },
     { ...valid, sourceIds: ["DT-benefits"] },
+    { ...valid, sourceIds: [] },
   ]) assert.throws(() => parseDocumentAnswer(JSON.stringify(body), sources));
   assert.equal(parseDocumentAnswer(JSON.stringify({ kind: "unsupported", text: "The document does not specify timelines.", sourceIds: [], evidence: [] }), sources).kind, "unsupported");
 });

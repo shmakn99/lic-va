@@ -19,6 +19,10 @@ Read `.local/rehearsal.json` alongside the source passages. Confirm all material
 - Digi Term: no maturity payout; single versus regular/limited premium definitions; revival/in-force and premium exclusions in the suicide clause.
 - Free look: 30 days from the earlier electronic/physical receipt; risk, medical and stamp deductions.
 
+With the local server running, `npx tsx scripts/rehearse-education.ts` checks general definitions, Hindi, mixed conceptual/product questions, unsupported product details, custom documents and recovery from an earlier over-restrictive refusal. Review `.local/education-rehearsal.json`: general answers may have no sources, product claims must cite relevant passages, and missing product terms must not be filled from general knowledge. These are live model rehearsals, not a runtime validator or an automated proof of factual correctness.
+
+The 7 October 2026 rehearsal answered the original term-protection question directly in English and Hindi and cited Digi Term benefits for mixed/product questions. Remaining model deviations: a request to use general knowledge for an exact claim checklist still elicited a generic checklist alongside the missing-procedure limitation; a definition following an earlier refusal overgeneralized the absence of survival payouts. Prompt instructions prohibit both, but do not mechanically enforce them. Successful HTTP responses are not a pass for these cases.
+
 ## Presentation-device checks (human)
 
 - [ ] A real microphone question for each plan in English.
