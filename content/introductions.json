@@ -1,0 +1,17 @@
+{
+  "new-jeevan-anand": {
+    "en-IN": "New Jeevan Anand combines savings with lifelong life cover. If all due premiums are paid, survival to the end of the policy term brings the Basic Sum Assured plus vested bonuses and any Final Additional Bonus; future bonuses are not promised. During the term it provides a death benefit, and after the term the Basic Sum Assured remains payable on death.",
+    "hi-IN": "न्यू जीवन आनंद में बचत के साथ जीवन भर का जीवन बीमा मिलता है। सभी देय प्रीमियम भरे होने पर, पॉलिसी अवधि के अंत तक जीवित रहने पर मूल बीमा राशि, जमा हुए बोनस और घोषित होने पर अंतिम अतिरिक्त बोनस मिलता है। भविष्य का बोनस तय नहीं है। अवधि के दौरान मृत्यु लाभ मिलता है और अवधि पूरी होने के बाद मृत्यु पर मूल बीमा राशि देय रहती है।",
+    "sourceIds": ["NJA-overview", "NJA-benefits"]
+  },
+  "jeevan-utsav-single-premium": {
+    "en-IN": "Jeevan Utsav Single Premium offers whole-life cover with a single premium. It has guaranteed additions during a chosen period of seven to seventeen years, followed by regular or deferred Flexi Income benefits on survival, under the selected option. It also provides death and maturity benefits. This is a non-participating plan, so there is no bonus or share of surplus; entry conditions depend on the chosen period.",
+    "hi-IN": "जीवन उत्सव सिंगल प्रीमियम में एक बार प्रीमियम देकर जीवन भर का बीमा मिलता है। सात से सत्रह साल की चुनी हुई अवधि में गारंटीड एडिशन जुड़ते हैं। इसके बाद जीवित रहने पर चुने हुए विकल्प के अनुसार नियमित आय या जमा होने वाली फ्लेक्सी आय का लाभ मिलता है। मृत्यु और मैच्योरिटी लाभ भी हैं। इसमें बोनस नहीं मिलता और प्रवेश की शर्तें चुनी हुई अवधि पर निर्भर करती हैं।",
+    "sourceIds": ["JUSP-overview", "JUSP-eligibility", "JUSP-benefits"]
+  },
+  "digi-term": {
+    "en-IN": "Digi Term is an online term insurance plan for life protection. You can choose level or increasing cover, with single, regular or limited premium payments. If the insured dies during the policy term while the policy is in force and the claim is admissible, a death benefit is payable. There is no maturity benefit on surviving the term, and this non-participating plan pays no bonus.",
+    "hi-IN": "डिजी टर्म जीवन सुरक्षा के लिए ऑनलाइन टर्म बीमा योजना है। इसमें एक समान या बढ़ता हुआ कवर, और एकमुश्त, नियमित या सीमित अवधि तक प्रीमियम देने के विकल्प हैं। पॉलिसी चालू होने और दावा स्वीकार्य होने पर, अवधि के दौरान मृत्यु होने पर मृत्यु लाभ देय है। अवधि पूरी होने तक जीवित रहने पर मैच्योरिटी लाभ नहीं मिलता। यह गैर-भागीदारी योजना है, इसलिए कोई बोनस नहीं मिलता।",
+    "sourceIds": ["DT-overview", "DT-terms", "DT-benefits"]
+  }
+}
