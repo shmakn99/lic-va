@@ -172,6 +172,12 @@ export default function Home() {
           </div>
         </div>
         <nav className="topbar-actions" aria-label={t.navigation}>
+          <a className="project-story-link" href="/enterprise-voice-ai.html" target="_blank" rel="noopener noreferrer">
+            <Icon name="book" size={16} />
+            {t.enterpriseVoiceAiStrategy}
+            <span aria-hidden="true">↗</span>
+            <span className="sr-only">{t.opensNewTab}</span>
+          </a>
           <a className="project-story-link" href="/presentation.html" target="_blank" rel="noopener noreferrer">
             <Icon name="book" size={16} />
             {t.projectStory}

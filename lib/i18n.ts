@@ -3,6 +3,7 @@ import { plans, type Language, type PlanId, type Source } from "./plans";
 const en = {
   navigation: "Main navigation",
   projectStory: "Project story",
+  enterpriseVoiceAiStrategy: "Enterprise Voice AI Strategy",
   opensNewTab: " (opens in a new tab)",
   brand: "Plan Companion",
   subtitle: "LIC plans, explained simply",
@@ -121,6 +122,7 @@ const en = {
 const hi: typeof en = {
   navigation: "मुख्य नेविगेशन",
   projectStory: "प्रोजेक्ट की कहानी",
+  enterpriseVoiceAiStrategy: "एंटरप्राइज़ वॉइस एआई रणनीति",
   opensNewTab: " (नए टैब में खुलेगा)",
   brand: "योजना साथी",
   subtitle: "एलआईसी की योजनाएँ, आसान शब्दों में",

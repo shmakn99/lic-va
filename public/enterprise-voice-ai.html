@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Enterprise Voice AI — A Delivery Thesis</title>
+<style>
+:root{--forest:#103c2e;--deep:#09271e;--green:#286346;--mint:#c4e5b7;--paper:#f7f8f2;--sage:#e4edde;--ink:#143d30;--muted:#4c6357;--scale:1}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden}body{background:#081e17;color:var(--paper);font-family:Arial,Helvetica,sans-serif;-webkit-font-smoothing:antialiased}button{font:inherit}button:focus-visible{outline:3px solid var(--mint);outline-offset:5px}
+.viewport{position:absolute;inset:0 0 64px;display:grid;place-items:center;overflow:hidden}.stage{position:relative;width:1600px;height:900px;flex:none;transform:scale(var(--scale));transform-origin:center;box-shadow:0 20px 100px #0003}
+.slide{position:absolute;inset:0;display:none;width:1600px;height:900px;overflow:hidden;background:var(--paper);color:var(--ink);padding:76px 96px}.slide.active{display:block}.blank{background:var(--forest)}.opener{background:var(--forest);color:var(--paper)}.opener.alt{background:var(--deep)}.opener .center{position:absolute;inset:130px 110px;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center}.opener h1{margin:0;font-size:91px;line-height:1.075;letter-spacing:-4.8px;font-weight:800}.opener h1 em{font-style:normal;color:var(--mint)}.opener h1 .gap{display:block;margin-top:24px}.opener.compact h1{font-size:100px}.marker{font-size:20px;font-weight:600;letter-spacing:2px;color:var(--green);margin:0 0 30px}.opener .marker{color:var(--mint);opacity:.85}.folio{position:absolute;right:96px;bottom:44px;font-size:18px;font-variant-numeric:tabular-nums;color:var(--muted)}.opener .folio{color:#a5c2b3}
+.detail.sage{background:var(--sage)}.detail h2{font-size:60px;line-height:1.08;letter-spacing:-2.2px;font-weight:700;margin:0;max-width:1300px}.content{display:grid;grid-template-columns:560px 1fr;gap:96px;margin-top:56px;align-items:start}.statement{margin:0;font-size:44px;line-height:1.15;letter-spacing:-1.2px;font-weight:700}.statement em{font-style:normal;color:var(--green)}.aside-note{font-size:24px;line-height:1.4;color:var(--muted);max-width:515px;margin:24px 0 0}.actions{display:flex;flex-direction:column;gap:27px}.action h3{font-size:27px;line-height:1.15;letter-spacing:-.45px;margin:0 0 9px;font-weight:700}.action p{font-size:24px;line-height:1.35;margin:0;color:var(--muted)}.takeaway{position:absolute;left:96px;right:96px;bottom:100px;padding-top:22px;border-top:1px solid #143d3033;font-size:26px;line-height:1.3;font-weight:600;letter-spacing:-.3px}.takeaway strong{color:var(--green)}
+.toolbar{position:fixed;bottom:0;left:0;right:0;height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 26px;color:#bacbc1;font-size:13px;gap:16px;background:#081e17}.toolbar .hint{font-size:12px;color:#9db2a5}.controls{display:flex;align-items:center;gap:12px}.toolbar button{border:0;background:transparent;color:#d7e6dc;padding:10px 12px;cursor:pointer;border-radius:4px}.toolbar button:hover{background:#ffffff12}.toolbar button:disabled{opacity:.3;cursor:default}.count{min-width:58px;text-align:center;font-variant-numeric:tabular-nums}.status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+dialog{background:var(--deep);color:var(--paper);border:1px solid #456354;padding:32px;width:min(980px,92vw);max-height:88vh;border-radius:8px}dialog::backdrop{background:#000a}.dialog-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}.dialog-top h2{font-size:23px;margin:0}.dialog-top button{color:var(--paper);background:transparent;border:0;padding:8px 12px;cursor:pointer}.slide-list{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.slide-link{color:var(--paper);background:#ffffff05;border:1px solid #ffffff1c;text-align:left;padding:15px;cursor:pointer;line-height:1.4;display:flex;gap:14px}.slide-link:hover,.slide-link[aria-current=true]{background:#ffffff12;border-color:var(--mint)}.slide-link span{color:var(--mint);font-variant-numeric:tabular-nums}
+@media(max-width:680px){.toolbar{padding:0 10px;gap:6px}.toolbar .hint{display:none}.controls{gap:2px}.toolbar button{padding:10px}.slide-list{grid-template-columns:1fr}}
+@media print{@page{size:16in 9in;margin:0}html,body{height:auto;width:16in;overflow:visible;background:white;print-color-adjust:exact;-webkit-print-color-adjust:exact}.viewport{position:static;display:block;overflow:visible}.stage{transform:none!important;width:16in;height:auto;box-shadow:none}.slide,.slide.active{position:relative;display:block;width:1600px;height:900px;zoom:.96;break-after:page;page-break-after:always}.slide:last-child{break-after:auto;page-break-after:auto}.toolbar,dialog,.status{display:none!important}}
+.thesis-copy{position:absolute;inset:100px 120px;display:flex;flex-direction:column;justify-content:center;gap:32px;color:var(--paper)}.thesis-copy p{margin:0;font-size:44px;line-height:1.3;letter-spacing:-.9px;font-weight:600}
+</style>
+</head>
+<body>
+<main class="viewport" aria-label="Presentation">
+<div class="stage">
+<section class="slide opener active" data-title="Thesis" aria-label="Slide 1: thesis">
+<p class="marker">THESIS</p>
+<div class="thesis-copy">
+<p>I feel that for any client-facing company, the durable edge is, still delivering outcomes even when the plan fails.</p>
+<p>This takes adaptive teams, a common success criterion for all stakeholders and customer trust, which is built through honest and well-timed communication.</p>
+<p>The advantage further compounds when the company chooses to work where each deployment improves the next deployment.</p>
+</div>
+</section>
+
+<section class="slide opener" data-title="Build the planning muscle">
+<p class="marker">01 / PLANNING</p>
+<div class="center"><h1>Build the planning muscle.<span class="gap"><em>Don’t fall in love<br>with the plan.</em></span></h1></div>
+<span class="folio">02 / 14</span>
+</section>
+
+<section class="slide detail" data-title="Replanning without exhausting the team">
+<p class="marker">01 / PLANNING</p>
+<h2>Replanning without exhausting the team</h2>
+<div class="content">
+<div><p class="statement">“No battle plan ever<br>survives first contact<br>with the enemy.”</p><p class="aside-note">Enterprise reality will break assumptions. Planning is a day-in, day-out exercise.</p></div>
+<div class="actions">
+<div class="action"><h3>Replan as assumptions break</h3><p>Test dependencies early. Update the delivery plan when customer systems, approvals, or requirements change.</p></div>
+<div class="action"><h3>Protect the soldiers and generals</h3><p>The deployment owner absorbs uncertainty and gives the team clear commitments. Every conversation cannot become a new marching order.</p></div>
+<div class="action"><h3>Make the trade-off explicit</h3><p>If scope changes, agree what happens to cost or timing. Keep the outcome clear.</p></div>
+</div></div>
+<p class="takeaway">The customer gets adaptability. The team gets enough stability to deliver.</p>
+<span class="folio">03 / 14</span>
+</section>
+
+<section class="slide opener alt" data-title="Get buy-in. Find your champions.">
+<p class="marker">02 / ALIGNMENT</p>
+<div class="center"><h1>Get buy-in.<span class="gap"><em>Find the people who’ll<br>battle it out for you.</em></span></h1></div>
+<span class="folio">04 / 14</span>
+</section>
+
+<section class="slide detail sage" data-title="One finish line, on both sides">
+<p class="marker">02 / ALIGNMENT</p>
+<h2>One finish line, on both sides</h2>
+<div class="content">
+<div><p class="statement">Buy-in matters.<br><em>It doesn’t need<br>to be devotional.</em></p><p class="aside-note">Everyone should understand the outcome and how their work contributes to it.</p></div>
+<div class="actions">
+<div class="action"><h3>Work toward the same success criteria</h3><p>“The APIs are in place” is only a milestone. Every team succeeds together when user acceptance passes and workflows work in production.</p></div>
+<div class="action"><h3>Understand who is rooting for you</h3><p>Find a champion in the customer’s organization whose success depends on the project. Help them advocate for it and clear blockers within their organization.</p></div>
+<div class="action"><h3>Build support beyond one person</h3><p>Involve the customer’s operational users and technical approvers. Agree on success criteria and define a dependable handoff.</p></div>
+</div></div>
+<p class="takeaway">Everyone works toward the same definition of success. Customer champions help turn delivery into adoption.</p>
+<span class="folio">05 / 14</span>
+</section>
+
+<section class="slide opener compact" data-title="Be honest for selfish reasons">
+<p class="marker">03 / TRUST</p>
+<div class="center"><h1>Be honest.<span class="gap"><em>For selfish reasons.</em></span></h1></div>
+<span class="folio">06 / 14</span>
+</section>
+
+<section class="slide detail" data-title="Trust depends on what you say, and when">
+<p class="marker">03 / TRUST</p>
+<h2>Trust depends on what you say, and when</h2>
+<div class="content">
+<div><p class="statement">False promises<br>become <em>your<br>problem later.</em></p><p class="aside-note">Progressive disclosure means giving customers the information they need before they make a decision.</p></div>
+<div class="actions">
+<div class="action"><h3>Keep commitments accurate</h3><p>Be clear about what is proven, what remains uncertain, and what the customer must contribute.</p></div>
+<div class="action"><h3>Time the detail to the decision</h3><p>Security dependencies belong early. Detailed user training can come later. Explain important limitations early enough for the customer to respond.</p></div>
+<div class="action"><h3>Check that the message has landed</h3><p>If the customer asks on the last day, “How does user access work?”, we have failed to prepare them.</p></div>
+</div></div>
+<p class="takeaway">Detail can arrive progressively. Important limitations need to be shared early.</p>
+<span class="folio">07 / 14</span>
+</section>
+
+<section class="slide opener alt compact" data-title="Use jargon tastefully">
+<p class="marker">04 / LANGUAGE</p>
+<div class="center"><h1>Use jargon.<span class="gap"><em>Tastefully.</em></span></h1></div>
+<span class="folio">08 / 14</span>
+</section>
+
+<section class="slide detail sage" data-title="Shared language makes requirements precise">
+<p class="marker">04 / LANGUAGE</p>
+<h2>Shared language makes requirements precise</h2>
+<div class="content">
+<div><p class="statement">Learn the customer’s<br>language.<br><em>Know what it means<br>in practice.</em></p><p class="aside-note">Industry vocabulary carries meaning about workflows, exceptions, and the consequences of failure.</p></div>
+<div class="actions">
+<div class="action"><h3>Earn credibility through substance</h3><p>Use the customer’s terms accurately. Understand the operating context behind them.</p></div>
+<div class="action"><h3>Make learning a two-way process</h3><p>Explain your terminology when it helps the customer decide. The shared vocabulary can deepen as the project progresses.</p></div>
+<div class="action"><h3>Turn words into acceptance criteria</h3><p>Define “successful call,” “handoff,” and “resolution” together. Carry those definitions into requirements and tests.</p></div>
+</div></div>
+<p class="takeaway">Technical language earns its place when it improves what gets built and how we judge success.</p>
+<span class="folio">09 / 14</span>
+</section>
+
+<section class="slide opener" data-title="With every deployment, learn something">
+<p class="marker">05 / REUSE</p>
+<div class="center"><h1>With every deployment,<span class="gap"><em>learn something.</em></span></h1></div>
+<span class="folio">10 / 14</span>
+</section>
+
+<section class="slide detail" data-title="Delivery experience should become company capability">
+<p class="marker">05 / REUSE</p>
+<h2>Delivery experience should become<br>company capability</h2>
+<div class="content" style="margin-top:42px">
+<div><p class="statement">The fifth deployment<br>shouldn’t need<br><em>the same heroics.</em></p><p class="aside-note">If the same problem keeps needing an exceptional person, the company has failed to learn.</p></div>
+<div class="actions" style="gap:22px">
+<div class="action"><h3>Retain what each deployment teaches</h3><p>Improve a discovery checklist, integration component, workflow template, or training guide.</p></div>
+<div class="action"><h3>Turn recurring problems into product work</h3><p>Build reusable voice tests for interruptions, ambiguous requests, and failed transfers. Adapt them to each customer.</p></div>
+<div class="action"><h3>Build on what worked last time</h3><p>Use and improve these assets on the next account. Preserve general lessons while protecting customer-specific information.</p></div>
+</div></div>
+<p class="takeaway">Tested solutions and accumulated judgment take time for a competitor to reproduce.</p>
+<span class="folio">11 / 14</span>
+</section>
+
+<section class="slide opener alt" data-title="Choose work where your experience compounds">
+<p class="marker">06 / FOCUS</p>
+<div class="center"><h1>Choose work where<span class="gap"><em>your experience<br>compounds.</em></span></h1></div>
+<span class="folio">12 / 14</span>
+</section>
+
+<section class="slide detail sage" data-title="Focus makes repeatability possible">
+<p class="marker">06 / FOCUS</p>
+<h2>Focus makes repeatability possible</h2>
+<div class="content">
+<div><p class="statement">Bespoke projects<br>can grow revenue.<br><em>But starting from<br>scratch every time<br>makes delivery<br>hard to scale.</em></p></div>
+<div class="actions">
+<div class="action"><h3>Concentrate on related workflows</h3><p>Choose customer problems with similar operating requirements. Position around the result you can repeatedly deliver.</p></div>
+<div class="action"><h3>Make customer selection deliberate</h3><p>Treat deals outside those strengths as explicit investments, with additional delivery costs.</p></div>
+<div class="action"><h3>Check whether experience pays off</h3><p>Track time to production, custom effort per deployment, production outcomes, and the effort needed to expand an account.</p></div>
+</div></div>
+<p class="takeaway">The test: each deployment becomes easier to deliver, while customer outcomes hold or improve.</p>
+<span class="folio">13 / 14</span>
+</section>
+
+<section class="slide opener" data-title="Thank you" aria-label="Slide 14: thank you">
+<div class="center"><h1>Thank you for your time.<span class="gap"><em>Let’s put the plan<br>to the test.</em></span></h1></div>
+</section>
+</div>
+</main>
+<nav class="toolbar" aria-label="Presentation controls">
+<div><button id="overview" type="button" title="Slide overview (O)">Slides</button><span class="hint">Arrow keys to navigate</span></div>
+<div class="controls"><button id="prev" type="button" aria-label="Previous slide" title="Previous slide">&#8592;</button><span class="count" id="counter">1 / 14</span><button id="next" type="button" aria-label="Next slide" title="Next slide">&#8594;</button></div>
+<button id="fullscreen" type="button" title="Toggle full screen (F)">Full screen</button>
+</nav>
+<p class="status" id="status" aria-live="polite"></p>
+<dialog id="slide-dialog" aria-labelledby="overview-title"><div class="dialog-top"><h2 id="overview-title">Slides</h2><button id="close-overview" type="button" aria-label="Close slide overview">Close</button></div><div class="slide-list" id="slide-list"></div></dialog>
+<script>
+(() => {
+  'use strict';
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const viewport = document.querySelector('.viewport');
+  const dialog = document.getElementById('slide-dialog');
+  const counter = document.getElementById('counter');
+  const prev = document.getElementById('prev');
+  const next = document.getElementById('next');
+  const status = document.getElementById('status');
+  let current = 0;
+  const readHash = () => /^#slide-\d+$/.test(location.hash) ? Number(location.hash.slice(7)) - 1 : 0;
+  function resize() {
+    const scale = Math.min(viewport.clientWidth / 1600, viewport.clientHeight / 900);
+    document.documentElement.style.setProperty('--scale', String(scale));
+  }
+  function show(index, updateHash = true) {
+    current = Math.max(0, Math.min(slides.length - 1, Number.isFinite(index) ? index : 0));
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === current);
+      slide.setAttribute('aria-hidden', String(i !== current));
+      slide.setAttribute('role', 'group');
+      slide.setAttribute('aria-roledescription', 'slide');
+      slide.setAttribute('aria-label', `${i + 1} of ${slides.length}: ${slide.dataset.title}`);
+    });
+    counter.textContent = `${current + 1} / ${slides.length}`;
+    prev.disabled = current === 0;
+    next.disabled = current === slides.length - 1;
+    status.textContent = `Slide ${current + 1} of ${slides.length}. ${slides[current].dataset.title}`;
+    document.querySelectorAll('.slide-link').forEach((button, i) => button.setAttribute('aria-current', String(i === current)));
+    if (updateHash) { try { history.replaceState(null, '', `#slide-${current + 1}`); } catch (_) { /* Navigation also works when local history is restricted. */ } }
+  }
+  function openOverview() {
+    dialog.showModal();
+    const active = document.querySelector('.slide-link[aria-current="true"]');
+    active.focus();
+    active.scrollIntoView({block:'nearest'});
+  }
+  async function toggleFullscreen() {
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else if (document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen();
+    } catch (_) { status.textContent = 'Full screen is unavailable here. Open this HTML file in your browser to present.'; }
+  }
+  slides.forEach((slide, index) => {
+    const button = document.createElement('button');
+    button.type = 'button'; button.className = 'slide-link';
+    const number = document.createElement('span'); number.textContent = String(index + 1).padStart(2, '0');
+    button.append(number, document.createTextNode(slide.dataset.title));
+    button.addEventListener('click', () => { show(index); dialog.close(); });
+    document.getElementById('slide-list').append(button);
+  });
+  prev.addEventListener('click', () => show(current - 1));
+  next.addEventListener('click', () => show(current + 1));
+  document.getElementById('overview').addEventListener('click', openOverview);
+  document.getElementById('close-overview').addEventListener('click', () => dialog.close());
+  document.getElementById('fullscreen').addEventListener('click', toggleFullscreen);
+  document.addEventListener('fullscreenchange', () => { document.getElementById('fullscreen').textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen'; resize(); });
+  document.addEventListener('keydown', event => {
+    if (event.altKey || event.ctrlKey || event.metaKey || dialog.open) return;
+    if (event.key === ' ' && event.target.closest('button')) return;
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(event.key)) { event.preventDefault(); show(current + 1); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(event.key)) { event.preventDefault(); show(current - 1); }
+    else if (event.key === 'Home') { event.preventDefault(); show(0); }
+    else if (event.key === 'End') { event.preventDefault(); show(slides.length - 1); }
+    else if (event.key.toLowerCase() === 'f') { event.preventDefault(); toggleFullscreen(); }
+    else if (event.key.toLowerCase() === 'o') { event.preventDefault(); openOverview(); }
+  });
+  let touchStart = null;
+  viewport.addEventListener('touchstart', event => { if (event.touches.length === 1) touchStart = {x:event.touches[0].clientX,y:event.touches[0].clientY}; }, {passive:true});
+  viewport.addEventListener('touchend', event => {
+    if (!touchStart) return;
+    const dx = event.changedTouches[0].clientX - touchStart.x;
+    const dy = event.changedTouches[0].clientY - touchStart.y;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.4) show(current + (dx < 0 ? 1 : -1));
+    touchStart = null;
+  }, {passive:true});
+  window.addEventListener('resize', resize);
+  window.addEventListener('hashchange', () => show(readHash(), false));
+  show(readHash(), false); resize();
+})();
+</script>
+</body>
+</html>
