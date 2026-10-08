@@ -11,8 +11,9 @@
   body { margin:0; background:#e8ece8; color:var(--ink); font-family:"Segoe UI",Arial,sans-serif; }
   button { font:inherit; cursor:pointer; }
   button:focus-visible { outline:3px solid #c87936; outline-offset:4px; }
-  .stage { height:calc(100dvh - 64px); display:grid; place-items:center; overflow:hidden; }
-  .canvas { width:1600px; height:900px; position:relative; flex-shrink:0; transform-origin:center; background:var(--paper); box-shadow:0 12px 70px #233b3b15; }
+  .stage { position:relative; height:calc(100vh - 64px); height:calc(100dvh - 64px); overflow:hidden; }
+  /* Center the canvas independently of its unscaled layout dimensions. */
+  .canvas { width:1600px; height:900px; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%) scale(var(--scale,1)); transform-origin:center; background:var(--paper); box-shadow:0 12px 70px #233b3b15; }
   .slide { position:absolute; inset:0; padding:56px 66px 46px; display:flex; flex-direction:column; }
   .slide[hidden] { display:none; }
   .eyebrow { display:flex; align-items:center; gap:12px; color:var(--accent); font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:2.7px; margin:0 0 19px; }
@@ -80,7 +81,7 @@
     @page { size:1600px 900px; margin:0; }
     body { background:white; }
     .stage { display:block; height:auto; overflow:visible; }
-    .canvas { width:1600px; height:auto; transform:none!important; box-shadow:none; }
+    .canvas { position:relative; left:auto; top:auto; width:1600px; height:auto; transform:none!important; box-shadow:none; }
     .slide,.slide[hidden] { display:flex!important; position:relative; width:1600px; height:900px; break-after:page; }
     .slide:last-child { break-after:auto; }
     .toolbar,dialog { display:none!important; }
@@ -226,7 +227,7 @@
   document.querySelector('.back-link').hidden = !['http:', 'https:'].includes(location.protocol);
   let current = 0;
   function fit() {
-    canvas.style.transform = `scale(${Math.min(stage.clientWidth / 1600, stage.clientHeight / 900)})`;
+    canvas.style.setProperty('--scale', String(Math.min(stage.clientWidth / 1600, stage.clientHeight / 900)));
   }
   function show(index) {
     current = Math.max(0, Math.min(slides.length - 1, index));
@@ -273,6 +274,7 @@
   document.addEventListener('fullscreenchange', () => { full.textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen'; fit(); });
   document.getElementById('print').addEventListener('click', () => window.print());
   window.addEventListener('resize', fit);
+  new ResizeObserver(fit).observe(stage);
   window.addEventListener('hashchange', readHash);
   fit(); readHash();
 })();
