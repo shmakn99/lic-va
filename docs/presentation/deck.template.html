@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Plan Companion — From idea to MVP</title>
+<style>
+  :root { --ink:#233b3b; --muted:#637370; --accent:#147568; --paper:#fffefa; --line:#dce4df; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:#e8ece8; color:var(--ink); font-family:"Segoe UI",Arial,sans-serif; }
+  button { font:inherit; cursor:pointer; }
+  button:focus-visible { outline:3px solid #c87936; outline-offset:4px; }
+  .stage { height:calc(100dvh - 64px); display:grid; place-items:center; overflow:hidden; }
+  .canvas { width:1600px; height:900px; position:relative; flex-shrink:0; transform-origin:center; background:var(--paper); box-shadow:0 12px 70px #233b3b15; }
+  .slide { position:absolute; inset:0; padding:56px 66px 46px; display:flex; flex-direction:column; }
+  .slide[hidden] { display:none; }
+  .eyebrow { display:flex; align-items:center; gap:12px; color:var(--accent); font-size:14px; font-weight:700; text-transform:uppercase; letter-spacing:2.7px; margin:0 0 19px; }
+  .eyebrow::before { content:""; width:29px; height:3px; background:var(--accent); }
+  h1 { font-size:49px; line-height:1.12; font-weight:600; letter-spacing:-1.8px; margin:0; }
+  .subtitle { font-size:21px; line-height:1.5; color:var(--muted); margin:14px 0 0; }
+  .process-body { display:grid; grid-template-columns:minmax(0,1fr) 366px; grid-template-rows:minmax(0,1fr); gap:36px; flex:1; min-height:0; margin-top:31px; }
+  figure { margin:0; }
+  .diagram { display:flex; align-items:center; justify-content:center; background:white; border:1px solid var(--line); border-radius:10px; padding:16px; width:100%; height:100%; min-height:0; overflow:hidden; }
+  .diagram img { display:block; width:100%; height:100%; object-fit:contain; }
+  .notes { list-style:none; padding:0; margin:0; align-self:center; }
+  .notes li { padding:16px 0; border-bottom:1px solid var(--line); }
+  .notes li:first-child { padding-top:0; }
+  .notes li:last-child { border:0; padding-bottom:0; }
+  .note-heading { display:flex; align-items:baseline; gap:12px; margin-bottom:8px; }
+  .index { color:var(--accent); font-size:13px; font-weight:700; letter-spacing:1px; }
+  h2 { font-size:23px; line-height:1.25; letter-spacing:-.4px; margin:0; font-weight:600; }
+  .notes p { font-size:18px; line-height:1.4; margin:0; color:var(--muted); }
+  .takeaway { margin-top:26px; padding:16px 21px; display:flex; gap:20px; align-items:baseline; border-left:3px solid var(--accent); background:#edf3ef; font-size:20px; }
+  .takeaway span { color:var(--accent); font-size:12px; text-transform:uppercase; letter-spacing:1.7px; font-weight:700; flex-shrink:0; }
+  .slide-foot { display:flex; justify-content:space-between; margin-top:25px; color:var(--muted); font-size:12px; letter-spacing:.6px; }
+  .blank { padding-top:104px; }
+  .feature-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); grid-template-rows:repeat(2,minmax(0,1fr)); gap:20px; margin-top:28px; flex:1; min-height:0; }
+  .feature { border:1px solid var(--line); background:white; border-radius:10px; overflow:hidden; display:flex; flex-direction:column; }
+  .feature-shot { display:flex; align-items:center; justify-content:center; height:156px; min-height:156px; background:#f6f7f3; padding:12px 18px; border:0; border-bottom:1px solid var(--line); width:100%; position:relative; }
+  .feature-shot img { display:block; max-width:100%; max-height:100%; object-fit:contain; }
+  .feature-shot::after { content:"↗"; position:absolute; bottom:8px; right:10px; font-size:18px; color:var(--accent); }
+  .feature-copy { padding:14px 20px; }
+  .feature-copy h2 { display:flex; gap:12px; align-items:baseline; font-size:23px; }
+  .feature-copy p { font-size:18px; line-height:1.43; color:var(--muted); margin:8px 0 0; }
+  .feature:first-child .feature-shot { padding:8px; }
+  .toolbar { position:fixed; inset:auto 0 0; height:64px; display:flex; align-items:center; justify-content:space-between; gap:12px; padding:0 24px; background:#f8faf7; border-top:1px solid #d7dfd8; }
+  .deck-name { font-size:13px; font-weight:600; }
+  .deck-home { display:flex; align-items:center; gap:16px; }
+  .back-link { color:var(--accent); text-decoration:none; font-size:13px; font-weight:600; padding:8px 0; white-space:nowrap; }
+  .back-link:hover { text-decoration:underline; }
+  .back-link:focus-visible { outline:3px solid #c87936; outline-offset:4px; }
+  .back-link[hidden] { display:none; }
+  .navigation,.utilities { display:flex; align-items:center; gap:8px; }
+  .toolbar button { background:transparent; border:1px solid transparent; color:var(--ink); border-radius:6px; padding:8px 12px; font-size:13px; }
+  .toolbar button:hover { background:#e5eee8; }
+  .toolbar button[aria-current="step"] { background:var(--ink); color:white; }
+  .toolbar button:disabled { opacity:.3; cursor:default; }
+  .counter { font-size:12px; margin-left:10px; color:var(--muted); min-width:45px; }
+  .keyboard-hint { font-size:12px; color:var(--muted); margin-right:9px; }
+  dialog { width:min(1300px,95vw); max-height:94dvh; border:1px solid var(--line); border-radius:12px; padding:18px; background:white; color:var(--ink); }
+  dialog::backdrop { background:#102c2ce0; }
+  .zoom-bar { display:flex; align-items:center; justify-content:space-between; margin-bottom:15px; gap:20px; }
+  .zoom-bar strong { font-size:18px; }
+  .zoom-bar button { padding:8px 15px; background:#edf3ef; border:0; border-radius:6px; }
+  dialog img { display:block; max-width:100%; max-height:calc(90dvh - 95px); margin:auto; object-fit:contain; }
+  .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  @media(max-width:800px) { .deck-name,.keyboard-hint { display:none; } .stage { height:calc(100dvh - 104px); } .toolbar { height:104px; padding:8px 12px; display:grid; grid-template-columns:1fr auto; gap:4px; } .deck-home { grid-column:1; grid-row:1; } .utilities { grid-column:2; grid-row:1; } .navigation { grid-column:1 / -1; grid-row:2; justify-content:center; } .toolbar button { padding:8px 10px; } .counter { margin-left:0; } }
+  @media print {
+    @page { size:1600px 900px; margin:0; }
+    body { background:white; }
+    .stage { display:block; height:auto; overflow:visible; }
+    .canvas { width:1600px; height:auto; transform:none!important; box-shadow:none; }
+    .slide,.slide[hidden] { display:flex!important; position:relative; width:1600px; height:900px; break-after:page; }
+    .slide:last-child { break-after:auto; }
+    .toolbar,dialog { display:none!important; }
+    * { print-color-adjust:exact; -webkit-print-color-adjust:exact; }
+  }
+</style>
+</head>
+<body>
+<main class="stage" aria-label="Plan Companion presentation">
+<div class="canvas">
+  <section class="slide" id="slide-1" aria-labelledby="title-1">
+    <header>
+      <p class="eyebrow">01 / Development process</p>
+      <h1 id="title-1">From seed to a hosted MVP</h1>
+      <p class="subtitle">A broad behavior spec. A failed first route. A focused second build.</p>
+    </header>
+    <div class="process-body">
+      <button class="diagram zoomable" aria-label="Enlarge the original development process diagram" data-title="Development process — original diagram">
+        <img src="assets/development-process.png" alt="Seed requirement becomes detailed behavior through 72 refinement questions. Synced deployment build fails. Scope cut-down produces an MVP implementation plan, then a local working MVP and a Vercel-hosted MVP.">
+      </button>
+      <ol class="notes">
+        <li><div class="note-heading"><span class="index">01</span><h2>Pin down the behavior</h2></div><p>Astra 6 helped turn the seed into 72 questions covering documents, answers, voice, UX, controls and quality.</p></li>
+        <li><div class="note-heading"><span class="index">02</span><h2>The first route failed</h2></div><p>Building directly on GitHub + Vercel expanded beyond the demo. iPad-to-laptop debugging slowed every fix.</p></li>
+        <li><div class="note-heading"><span class="index">03</span><h2>Cut scope to the core</h2></div><p>Keep conversation, question answering and plan selection. Turn the detailed spec into an MVP plan.</p></li>
+        <li><div class="note-heading"><span class="index">04</span><h2>Prove it locally, then host</h2></div><p>Build a working local MVP first. Deploy it through GitHub to Vercel.</p></li>
+      </ol>
+    </div>
+    <div class="takeaway"><span>The lesson</span>Define broadly. Scope deliberately. Get it working locally.</div>
+    <footer class="slide-foot"><span>PLAN COMPANION / THE BUILD STORY</span><span>01</span></footer>
+  </section>
+
+  <section class="slide" id="slide-2" aria-labelledby="title-2" hidden>
+    <header>
+      <p class="eyebrow">02 / Refinement process</p>
+      <h1 id="title-2">Close the gap. Repeat.</h1>
+      <p class="subtitle">Desired behavior meets the working MVP — one guided improvement at a time.</p>
+    </header>
+    <div class="process-body">
+      <button class="diagram zoomable" aria-label="Enlarge the original refinement process diagram" data-title="Refinement process — original diagram">
+        <img src="assets/refinement-process.png" alt="Seed requirement, look and feel, and experience define desired behavior. Compare them with the working MVP through behavioral gap analysis. Close the gaps and loop back to the MVP.">
+      </button>
+      <ol class="notes">
+        <li><div class="note-heading"><span class="index">01</span><h2>Keep the goal in view</h2></div><p>The seed requirement stays the touchstone. The product must serve its core purpose.</p></li>
+        <li><div class="note-heading"><span class="index">02</span><h2>Make “better” specific</h2></div><p>Define the look and feel, simpler language, answer behavior and context across follow-up turns.</p></li>
+        <li><div class="note-heading"><span class="index">03</span><h2>Compare desired vs. actual</h2></div><p>Try the working MVP. Identify the concrete gap between what it does and what it should do.</p></li>
+        <li><div class="note-heading"><span class="index">04</span><h2>Guide, close, recheck</h2></div><p>Give the coding agent the desired behavior, guide the fix and assess the result. Repeat across all three goals.</p></li>
+      </ol>
+    </div>
+    <div class="takeaway"><span>Three recurring loops</span>Core requirement &nbsp; / &nbsp; Look and feel &nbsp; / &nbsp; Experience</div>
+    <footer class="slide-foot"><span>PLAN COMPANION / THE REFINEMENT LOOP</span><span>02</span></footer>
+  </section>
+
+  <section class="slide blank" id="slide-3" aria-labelledby="title-3" hidden>
+    <h1 id="title-3">Road to production</h1>
+  </section>
+
+  <section class="slide" id="slide-4" aria-labelledby="title-4" hidden>
+    <header>
+      <p class="eyebrow">04 / Features at a glance</p>
+      <h1 id="title-4">A conversation, on your terms.</h1>
+      <p class="subtitle">Choose a plan. Set the language and detail. Ask in the way that suits you.</p>
+    </header>
+    <div class="feature-grid">
+      <article class="feature">
+        <button class="feature-shot zoomable" aria-label="Enlarge plan selection screenshot" data-title="01 / Plan selection"><img src="assets/plan-selection.png" alt="The three plan cards: New Jeevan Anand, Jeevan Utsav Single Premium and Digi Term."></button>
+        <div class="feature-copy"><h2><span class="index">01</span>Plan selection</h2><p>Pick one of three LIC plans. Questions use that plan’s prepared documents.</p></div>
+      </article>
+      <article class="feature">
+        <button class="feature-shot zoomable" aria-label="Enlarge language toggle screenshot" data-title="02 / Hindi–English toggle"><img src="assets/language-toggle.png" alt="English and Hindi language buttons in the app."></button>
+        <div class="feature-copy"><h2><span class="index">02</span>Hindi–English toggle</h2><p>Switch the interface and new answers between English and Hindi, including speech.</p></div>
+      </article>
+      <article class="feature">
+        <button class="feature-shot zoomable" aria-label="Enlarge simple language answer screenshot" data-title="03 / Language simplicity — an actual app response"><img src="assets/simple-answer.png" alt="An actual New Jeevan Anand response in very simple language, with Sources and Listen controls."></button>
+        <div class="feature-copy"><h2><span class="index">03</span>Language simplicity</h2><p>Very simple mode uses everyday words and shorter sentences to explain policy terms.</p></div>
+      </article>
+      <article class="feature">
+        <button class="feature-shot zoomable" aria-label="Enlarge answer style screenshot" data-title="04 / Language complexity control"><img src="assets/answer-style.png" alt="Answer style slider offering Very simple, Normal and Technical language."></button>
+        <div class="feature-copy"><h2><span class="index">04</span>Complexity control</h2><p>Choose Very simple, Normal or Technical. The setting applies to new answers.</p></div>
+      </article>
+      <article class="feature">
+        <button class="feature-shot zoomable" aria-label="Enlarge voice controls screenshot" data-title="05 / Tap to speak"><img src="assets/voice-controls.png" alt="Question input with microphone, send button and automatic voice playback toggle."></button>
+        <div class="feature-copy"><h2><span class="index">05</span>Tap to speak</h2><p>Tap to record; tap again to send. Read the answer, listen to it or keep typing.</p></div>
+      </article>
+      <article class="feature">
+        <button class="feature-shot zoomable" aria-label="Enlarge optional goals screenshot" data-title="06 / Optional goals"><img src="assets/optional-goals.png" alt="What matters to you optional field with an example priority: Protect my family and save for the future."></button>
+        <div class="feature-copy"><h2><span class="index">06</span>Optional goals</h2><p>Add what matters to you. New answers use it until you reset or change the product.</p></div>
+      </article>
+    </div>
+    <footer class="slide-foot"><span>ACTUAL APP SCREENSHOTS / CLICK ANY IMAGE TO ENLARGE</span><span>04</span></footer>
+  </section>
+</div>
+</main>
+<nav class="toolbar" aria-label="Presentation controls">
+  <div class="deck-home"><a class="back-link" href="/" hidden>← Back to chat</a><span class="deck-name">Plan Companion</span></div>
+  <div class="navigation">
+    <button id="previous" aria-label="Previous slide">←</button>
+    <button data-slide="0" aria-label="Slide 1: Development process" aria-current="step">01</button>
+    <button data-slide="1" aria-label="Slide 2: Refinement process">02</button>
+    <button data-slide="2" aria-label="Slide 3: Road to production">03</button>
+    <button data-slide="3" aria-label="Slide 4: Features at a glance">04</button>
+    <button id="next" aria-label="Next slide">→</button>
+    <span class="counter" id="counter">1 / 4</span>
+  </div>
+  <div class="utilities"><span class="keyboard-hint">← → to navigate</span><button id="fullscreen">Full screen</button><button id="print">Print / PDF</button></div>
+</nav>
+<div class="sr-only" id="announcement" role="status" aria-live="polite"></div>
+<dialog id="zoom" aria-labelledby="zoom-title">
+  <div class="zoom-bar"><strong id="zoom-title"></strong><button id="close-zoom">Close ×</button></div>
+  <img id="zoom-image" alt="">
+</dialog>
+<script>
+(() => {
+  const slides = [...document.querySelectorAll('.slide')];
+  const tabs = [...document.querySelectorAll('[data-slide]')];
+  const canvas = document.querySelector('.canvas');
+  const stage = document.querySelector('.stage');
+  const dialog = document.getElementById('zoom');
+  document.querySelector('.back-link').hidden = !['http:', 'https:'].includes(location.protocol);
+  let current = 0;
+  function fit() {
+    canvas.style.transform = `scale(${Math.min(stage.clientWidth / 1600, stage.clientHeight / 900)})`;
+  }
+  function show(index) {
+    current = Math.max(0, Math.min(slides.length - 1, index));
+    slides.forEach((slide, i) => { slide.hidden = i !== current; });
+    tabs.forEach((tab,i) => { if(i === current) tab.setAttribute('aria-current','step'); else tab.removeAttribute('aria-current'); });
+    document.getElementById('previous').disabled = current === 0;
+    document.getElementById('next').disabled = current === slides.length - 1;
+    document.getElementById('counter').textContent = `${current + 1} / ${slides.length}`;
+    const title = slides[current].querySelector('h1').textContent;
+    document.getElementById('announcement').textContent = `Slide ${current + 1} of 4. ${title}`;
+    document.title = `${title} — Plan Companion`;
+    const hash = `#slide-${current + 1}`;
+    if(location.hash !== hash) history.replaceState(null, '', hash);
+  }
+  function readHash() {
+    const match = location.hash.match(/^#slide-([1-4])$/);
+    show(match ? Number(match[1]) - 1 : 0);
+  }
+  tabs.forEach(tab => tab.addEventListener('click', () => show(Number(tab.dataset.slide))));
+  document.getElementById('previous').addEventListener('click', () => show(current - 1));
+  document.getElementById('next').addEventListener('click', () => show(current + 1));
+  document.addEventListener('keydown', event => {
+    if(dialog.open || event.ctrlKey || event.metaKey || event.altKey) return;
+    if(['ArrowRight','PageDown'].includes(event.key) || (event.key === ' ' && event.target === document.body)) { event.preventDefault(); show(current + 1); }
+    if(['ArrowLeft','PageUp'].includes(event.key)) { event.preventDefault(); show(current - 1); }
+    if(event.key === 'Home') { event.preventDefault(); show(0); }
+    if(event.key === 'End') { event.preventDefault(); show(3); }
+  });
+  document.querySelectorAll('.zoomable').forEach(button => button.addEventListener('click', () => {
+    const source = button.querySelector('img');
+    const target = document.getElementById('zoom-image');
+    target.src = source.src; target.alt = source.alt;
+    document.getElementById('zoom-title').textContent = button.dataset.title;
+    dialog.showModal();
+  }));
+  document.getElementById('close-zoom').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('click', event => { if(event.target === dialog) { const bounds = dialog.getBoundingClientRect(); if(event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) dialog.close(); } });
+  const full = document.getElementById('fullscreen');
+  if(!document.fullscreenEnabled) full.hidden = true;
+  full.addEventListener('click', async () => {
+    try { if(document.fullscreenElement) await document.exitFullscreen(); else await document.documentElement.requestFullscreen(); }
+    catch { document.getElementById('announcement').textContent = 'Full screen is unavailable in this browser.'; }
+  });
+  document.addEventListener('fullscreenchange', () => { full.textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen'; fit(); });
+  document.getElementById('print').addEventListener('click', () => window.print());
+  window.addEventListener('resize', fit);
+  window.addEventListener('hashchange', readHash);
+  fit(); readHash();
+})();
+</script>
+</body>
+</html>

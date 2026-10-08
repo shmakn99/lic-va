@@ -171,9 +171,17 @@ export default function Home() {
             <span>{c.document ? t.customGrounded : t.subtitle}</span>
           </div>
         </div>
-        <div className="demo-tag">
-          <span /> {t.demo}
-        </div>
+        <nav className="topbar-actions" aria-label={t.navigation}>
+          <a className="project-story-link" href="/presentation.html" target="_blank" rel="noopener noreferrer">
+            <Icon name="book" size={16} />
+            {t.projectStory}
+            <span aria-hidden="true">↗</span>
+            <span className="sr-only">{t.opensNewTab}</span>
+          </a>
+          <div className="demo-tag">
+            <span /> {t.demo}
+          </div>
+        </nav>
       </header>
       <section className="intro-row">
         <div>

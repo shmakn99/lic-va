@@ -1,6 +1,9 @@
 import { plans, type Language, type PlanId, type Source } from "./plans";
 
 const en = {
+  navigation: "Main navigation",
+  projectStory: "Project story",
+  opensNewTab: " (opens in a new tab)",
   brand: "Plan Companion",
   subtitle: "LIC plans, explained simply",
   demo: "Independent voice demo",
@@ -116,6 +119,9 @@ const en = {
   },
 };
 const hi: typeof en = {
+  navigation: "मुख्य नेविगेशन",
+  projectStory: "प्रोजेक्ट की कहानी",
+  opensNewTab: " (नए टैब में खुलेगा)",
   brand: "योजना साथी",
   subtitle: "एलआईसी की योजनाएँ, आसान शब्दों में",
   demo: "आवाज़ पर आधारित स्वतंत्र डेमो",

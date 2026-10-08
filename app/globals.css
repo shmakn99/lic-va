@@ -80,6 +80,30 @@ a {
   gap: 13px;
   align-items: center;
 }
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.project-story-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 650;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.project-story-link:hover {
+  background: var(--primary-soft);
+  border-color: var(--primary);
+}
 .brand-mark {
   height: 42px;
   width: 42px;
@@ -946,7 +970,17 @@ html:lang(hi) strong {
     padding: 0 16px;
   }
   .topbar {
-    height: 78px;
+    height: auto;
+    min-height: 78px;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 0;
+  }
+  .topbar-actions {
+    width: 100%;
+    justify-content: space-between;
+    gap: 8px;
+    flex-wrap: wrap;
   }
   .brand strong {
     font-size: 18px;
