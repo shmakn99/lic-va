@@ -2,6 +2,20 @@
 
 A Next.js + React + TypeScript application for document-grounded conversations about New Jeevan Anand (715), Jeevan Utsav Single Premium (883), and Digi Term (876). English and Hindi text and speech use Sarvam. Runs locally or on Vercel; see [deployment setup and requirements](docs/deployment.md).
 
+## Streaming live conversation
+
+**Start live conversation** enables continuous microphone capture, partial
+transcripts, automatic turn detection, validated streaming answers and interruptible
+streaming speech. `npm run dev` starts the web app and a separate voice service.
+The original record-and-submit flow remains available. **Voice measurements and
+review** tracks response/playback timing distributions and correctness observations,
+with JSON export and no latency targets. See the [implementation, operation and
+measurement guide](docs/streaming-voice.md) for deployment, limits, provider checks
+and physical-device testing. Set `VOICE_STREAMING_ENABLED=false` for the original
+web-only deployment. On Vercel, `/api/voice/socket` runs the same voice coordinator
+inside a Fluid compute function; no separate voice host is needed. Enable streaming
+and configure a session secret as described in [deployment setup](docs/deployment.md).
+
 ## Sales conversation — first iteration
 
 - Start with **Pitch this plan** for a benefit-led pitch with a relevant trade-off and a next step. **Explain this plan** remains available for a neutral introduction.
@@ -26,7 +40,7 @@ Open **http://127.0.0.1:3000** in Chrome or Edge. The launcher locates the exist
 
 Your credential is in `.env.local`, excluded by `.gitignore`. `.env.example` is a blank template. Never use a `NEXT_PUBLIC_` variable for the key. Restart the server after editing credentials.
 
-For other machines: Node 24 LTS, `npm ci`, copy `.env.example` to `.env.local`, set `SARVAM_API_KEY`, then `npm run dev`. On networks using a corporate certificate authority, Node 24 supports `NODE_USE_SYSTEM_CA=1`; certificate verification stays enabled.
+For other machines: Node 24 LTS, `npm ci`, copy `.env.example` to `.env.local`, set `SARVAM_API_KEY`, then `npm run dev`. Both `npm run dev` and `npm start` enable system certificate trust for the web and voice services; certificate verification stays enabled. The standalone voice server and provider smoke commands use the same trust settings.
 
 ## Try it
 
@@ -54,7 +68,7 @@ Live smoke tests passed for text, English/Hindi TTS and transcription. The brows
 
 ## Scope and implementation
 
-- `/api/transcribe`, `/api/chat`, `/api/speak` are Node route handlers. `/api/status` exposes only whether a key is configured. Custom text uses the same chat route with a bounded 200,000-byte body.
+- `/api/transcribe`, `/api/chat`, `/api/speak` are Node route handlers. `/api/status` exposes provider configuration and live-mode readiness booleans only. Custom text uses the same chat route with a bounded 200,000-byte body.
 - `content/*.md` contains selected official source passages; `content/sources.json` maps stable source IDs to official documents and PDF pages. Each request loads only the selected plan, or only the supplied custom document.
 - Technical introductions are manually authored in both languages, checked against cited passages and stored in `content/introductions.json`. Simpler introductions, open questions and follow-ups use the live text model with the selected answer style. There is no simulated provider mode or model fallback.
 - Browser-only conversation state; latest six completed exchanges are sent. No accounts, database, vector search, session store or restoration after refresh.
@@ -102,7 +116,7 @@ The one-time `scripts/prepare_sources.py` utility downloads official PDFs to ign
 - **Permission denied:** enable microphone permission for `127.0.0.1` in the browser. Recording requires localhost or HTTPS.
 - **No sound:** use Play/Replay, check device volume/output, or retry audio. Disabling automatic voice does not remove text.
 - **API access error:** check the key, credits and model access in Sarvam. No alternative models are silently selected.
-- **Certificate error:** use the launcher / `NODE_USE_SYSTEM_CA=1` on this Windows network.
+- **Certificate error / repeated live disconnects:** restart using `npm run dev` or `npm start`; both now enable system certificate trust. Run `npm run smoke:streaming` and see [voice diagnostics](docs/streaming-voice.md#diagnosing-disconnects) for provider error codes. Independently launched Node processes need `--use-system-ca` or `NODE_USE_SYSTEM_CA=1` on this Windows network.
 - **Port in use:** stop the earlier local server before restarting.
 
 API references: [Sarvam chat](https://docs.sarvam.ai/api/api-guides-tutorials/chat-completion/overview), [STT](https://docs.sarvam.ai/api-reference/speech-to-text/transcribe), [TTS](https://docs.sarvam.ai/api-reference/text-to-speech/convert).

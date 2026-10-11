@@ -39,7 +39,7 @@ test("desktop layout, source links, follow-up context, language preservation and
     .getByRole("button", { name: "Explain this plan", exact: true })
     .click();
   await expect(page.getByText(response.text)).toBeVisible();
-  await page.locator("summary").click();
+  await page.locator(".answer-controls summary").click();
   await expect(
     page.getByRole("link", { name: "Official LIC brochure" }),
   ).toHaveAttribute("href", /licindia.in/);

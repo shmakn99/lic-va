@@ -4,7 +4,7 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { plans } from "../../lib/plans";
 import { ui } from "../../lib/i18n";
 
-test("live native recording → Sarvam transcript → grounded chat → playback without browser decoding, all plans/languages", async () => {
+test("live native recording → Sarvam transcript → grounded chat → playback without browser decoding, all plans/languages", async ({}, testInfo) => {
   test.skip(
     process.env.LIVE_VOICE_TEST !== "1",
     "Explicit opt-in: makes real Sarvam API calls with synthetic microphone input.",
@@ -31,7 +31,7 @@ test("live native recording → Sarvam transcript → grounded chat → playback
           throw new Error("Unable to decode audio data");
         };
       });
-      await page.goto("http://127.0.0.1:3000");
+      await page.goto(testInfo.project.use.baseURL!);
       if (language === "hi-IN")
         await page.getByRole("button", { name: "हिन्दी", exact: true }).click();
       for (const plan of plans) {

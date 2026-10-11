@@ -5,6 +5,7 @@ import { ui, planCopy, sourceCopy, messageCopy } from "@/lib/i18n";
 import { useVoiceConversation, type Message } from "@/lib/use-voice-conversation";
 import { answerStyles } from "@/lib/answer-style";
 import { DocumentContext } from "./document-context";
+import { VoiceTracking } from "./voice-tracking";
 
 function Icon({
   name,
@@ -17,6 +18,7 @@ function Icon({
     | "book"
     | "reset"
     | "stop"
+    | "check"
     | "play"
     | "spark"
     | "copy";
@@ -57,6 +59,7 @@ function Icon({
       </>
     ),
     stop: <rect x="6" y="6" width="12" height="12" rx="2" />,
+    check: <path d="m5 12 4 4L19 6" />,
     play: <path d="m8 4 12 8-12 8V4Z" />,
     spark: (
       <>
@@ -150,7 +153,7 @@ export default function Home() {
     if (nearBottom.current && conversation.current) {
       conversation.current.scrollTop = conversation.current.scrollHeight;
     }
-  }, [c.messages.length, c.status]);
+  }, [c.messages, c.status]);
   const send = (text: string) => {
     if (disabled || !text.trim()) return;
     setDraft("");
@@ -158,6 +161,7 @@ export default function Home() {
   };
   const suggestions = c.document || c.messages.length ? t.salesSuggestions : t.suggestionsList[c.planId];
   const lastUserId = c.messages.findLast((m) => m.role === "user")?.id;
+  const liveActive = c.liveState !== "off";
 
   return (
     <main className="app-shell">
@@ -418,6 +422,7 @@ export default function Home() {
                         </div>
                       )}
                     <p lang={m.language === "hi-IN" ? "hi" : "en"}>{m.text}</p>
+                    {m.interrupted && <small>{c.language === "hi-IN" ? "उत्तर बीच में रोका गया" : "Response interrupted"}</small>}
                     {m.role === "assistant" && (
                       <div className="answer-controls">
                         {!!m.sources?.length && (
@@ -478,7 +483,7 @@ export default function Home() {
                         {messageCopy(m.audioError, c.language)}
                       </div>
                     )}
-                    {m.failed && (
+                    {m.failed && m.id === lastUserId && (
                       <button
                         className="retry-button"
                         disabled={disabled}
@@ -497,7 +502,28 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="composer-area">
+          <div className={`composer-area ${c.liveAvailable ? "live-primary" : ""}`}>
+            {c.liveAvailable && <div className="live-controls" role="group" aria-label={t.liveConversation}>
+              <button
+                type="button"
+                className={`live-action ${liveActive ? "live-end" : "live-start"}`}
+                onClick={() => liveActive ? c.stopLive() : void c.startLive()}
+                disabled={!liveActive && disabled}
+              >
+                <span className="live-action-icon"><Icon name={liveActive ? "stop" : "mic"} size={28} /></span>
+                <span>{liveActive ? t.endLive : t.startLive}</span>
+              </button>
+              {liveActive && <button
+                type="button"
+                className="live-action live-finish"
+                onClick={c.finishLiveTurn}
+                disabled={c.liveState !== "listening"}
+              >
+                <span className="live-action-icon"><Icon name="check" size={23} /></span>
+                <span>{t.finishLiveTurn}</span>
+              </button>}
+            </div>}
+            {c.partialTranscript && <div className="notice" aria-live="polite">{c.partialTranscript}</div>}
             {c.error && (
               <div className="alert" role="alert">
                 {messageCopy(c.error, c.language)}
@@ -533,7 +559,7 @@ export default function Home() {
                 value={draft}
                 disabled={disabled}
                 onChange={(e) => setDraft(e.target.value)}
-                placeholder={t.placeholder}
+                placeholder={c.liveAvailable ? t.secondaryPlaceholder : t.placeholder}
                 onKeyDown={(e) => {
                   if (
                     e.key === "Enter" &&
@@ -548,7 +574,7 @@ export default function Home() {
               <button
                 type="button"
                 className={`mic-button ${c.status === "Listening" ? "is-recording" : ""}`}
-                disabled={c.processing || c.configured === false}
+                disabled={liveActive || c.processing || c.configured === false}
                 onClick={() => void c.microphone()}
                 aria-label={
                   c.status === "Listening" ? t.stopRecording : t.startRecording
@@ -574,7 +600,7 @@ export default function Home() {
                 role="status"
               >
                 <span />
-                {t.statuses[c.status]}
+                {liveActive ? t.liveStatuses[c.liveState as keyof typeof t.liveStatuses] : t.statuses[c.status]}
                 {c.status === "Listening" &&
                   ` · ${c.seconds}${t.seconds} / 25${t.seconds} · ${t.micHint}`}
               </div>
@@ -601,6 +627,7 @@ export default function Home() {
           </div>
         </section>
       </div>
+      <VoiceTracking read={c.readMeasurements} record={c.recordVoiceReview} download={c.exportMeasurements} hindi={c.language === "hi-IN"} />
       <footer className="page-footer">
         <span>{t.footer}</span>
         <span>

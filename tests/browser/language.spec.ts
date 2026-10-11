@@ -80,11 +80,11 @@ test("Hindi covers the whole page, all plans, source details, errors and accessi
   await expect(page.locator(".audio-error")).toContainText(
     "आवाज़ उपलब्ध नहीं थी",
   );
-  await page.locator("summary").click();
+  await page.locator(".answer-controls summary").click();
   await expect(
     page.getByRole("link", { name: /आधिकारिक विवरणिका/ }),
   ).toHaveAttribute("href", "https://licindia.in/#page=3");
-  await expect(page.locator("details")).toContainText("पीडीएफ पृष्ठ 3, 4");
+  await expect(page.locator(".answer-controls details")).toContainText("पीडीएफ पृष्ठ 3, 4");
   expect(
     (await page.locator("main").innerText()).replace(/512N\d+V\d+/g, ""),
   ).not.toMatch(/[A-Za-z]/);

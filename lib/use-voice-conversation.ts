@@ -4,6 +4,9 @@ import type { Answer, Exchange, Language, PlanId, Source } from "./plans";
 import { recordingFile } from "./audio";
 import { defaultAnswerStyle, type AnswerStyle } from "./answer-style";
 import type { ProductDocument } from "./product-document";
+import { VoiceClient, type LiveState } from "./voice/client";
+import { VoiceMeasurements } from "./voice/metrics";
+import type { ServerEvent, VoiceConfig } from "./voice/protocol";
 
 export type Status =
   | "Ready"
@@ -24,6 +27,9 @@ export type Message = {
   failed?: boolean;
   completed?: boolean;
   spoken?: boolean;
+  live?: boolean;
+  interrupted?: boolean;
+  playedText?: string;
 };
 type Reply = Answer & { sources: Source[] };
 const errorText = (e: unknown) =>
@@ -82,6 +88,81 @@ export function useVoiceConversation() {
   const playbackVersion = useRef(0);
   const objectUrls = useRef(new Set<string>());
   const mounted = useRef(true);
+  const [liveState, setLiveState] = useState<LiveState>("off");
+  const [liveAvailable, setLiveAvailable] = useState(false);
+  const [partialTranscript, setPartialTranscript] = useState("");
+  const liveClient = useRef<VoiceClient | null>(null);
+  const measurements = useRef(new VoiceMeasurements());
+  const liveSegments = useRef(new Map<string, string[]>());
+  const liveUsers = useRef(new Map<string, string>());
+  const classicTurns = useRef(new Map<string, number>());
+
+  function liveConfig(): VoiceConfig {
+    const current = state.current;
+    const history: Exchange[] = [];
+    for (let i = 0; i < current.messages.length - 1; i++) {
+      const user = current.messages[i], answer = current.messages[i + 1];
+      if (user.role === "user" && !user.failed && answer.role === "assistant" && (answer.completed || answer.interrupted))
+        history.push({ user: user.text, assistant: answer.live ? (answer.playedText || "") + (answer.interrupted || answer.playedText !== answer.text ? " [Response interrupted; do not assume the remaining text was heard.]" : "") : answer.text });
+    }
+    return { planId: current.planId, language: current.language, answerStyle: current.answerStyle, document: current.document, priority: current.priority, history: history.slice(-6), validation: "segments", voice: voiceRef.current };
+  }
+  function liveEvent(event: ServerEvent) {
+    if (!mounted.current) return;
+    if (event.type === "transcript.partial") setPartialTranscript(event.text);
+    if (event.type === "transcript.final") {
+      setPartialTranscript("");
+      setMessages(ms => [...ms, { id: event.turnId, role: "user", text: event.text, language: state.current.language, spoken: event.spoken, live: true }]);
+    }
+    if (event.type === "response.start") {
+      liveSegments.current.set(event.responseId, []); liveUsers.current.set(event.responseId, event.turnId);
+      setMessages(ms => [...ms, { id: event.responseId, role: "assistant", text: "", language: state.current.language, sources: [], live: true }]);
+    }
+    if (event.type === "segment") {
+      const segments = liveSegments.current.get(event.responseId);
+      if (!segments || event.index !== segments.length) { measurements.current.record("correctness.segment_order_rejected"); return; }
+      segments.push(event.answer.text);
+      setMessages(ms => ms.map(m => m.id === event.responseId ? { ...m, text: segments.join(" "), kind: event.answer.kind,
+        ...(!voiceRef.current ? { playedText: segments.join(" ") } : {}),
+        sources: [...new Map([...(m.sources || []), ...event.answer.sources].map(s => [s.id, s])).values()] } : m));
+    }
+    if (event.type === "metric" && event.name === "playback.segment") {
+      const segments = liveSegments.current.get(event.responseId!);
+      if (segments) updateMessage(event.responseId!, { playedText: segments.slice(0, (event.value ?? -1) + 1).join(" ") });
+    }
+    if (event.type === "response.end") {
+      updateMessage(event.responseId, { completed: true });
+      const user = liveUsers.current.get(event.responseId); if (user) updateMessage(user, { completed: true });
+    }
+    if (event.type === "interrupted") {
+      updateMessage(event.responseId, { interrupted: true, completed: true });
+      const user = liveUsers.current.get(event.responseId); if (user) updateMessage(user, { completed: true });
+      setPlayingId(null);
+    }
+    if (event.type === "error") {
+      setError(event.message);
+      if (event.responseId) updateMessage(event.responseId, { audioError: event.message });
+      if (event.scope === "generation" && event.responseId) {
+        const user = liveUsers.current.get(event.responseId); if (user) updateMessage(user, { failed: true });
+      }
+    }
+  }
+  function stopLive() { liveClient.current?.stop(); liveClient.current = null; setPartialTranscript(""); }
+  async function startLive() {
+    cancel(); setError("");
+    const client = new VoiceClient(liveConfig, liveEvent, value => {
+      if (!mounted.current) return;
+      setLiveState(value);
+      setStatus(value === "speaking" ? "Speaking" : value === "thinking" ? "Thinking" : "Ready");
+    }, measurements.current);
+    liveClient.current = client; await client.start();
+  }
+  function exportMeasurements() {
+    const blob = new Blob([JSON.stringify(measurements.current.export(), null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob); const link = window.document.createElement("a");
+    link.href = url; link.download = `voice-measurements-${new Date().toISOString().replace(/[:.]/g, "-")}.json`; link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  }
 
   function clearTimers() {
     if (cap.current) clearTimeout(cap.current);
@@ -90,6 +171,7 @@ export function useVoiceConversation() {
     ticker.current = null;
   }
   function stopAudio() {
+    liveClient.current?.interrupt("stop_audio");
     playbackVersion.current++;
     speech.current?.abort();
     speech.current = null;
@@ -105,6 +187,7 @@ export function useVoiceConversation() {
     );
   }
   function cancel() {
+    stopLive();
     generation.current++;
     chain.current?.abort();
     chain.current = null;
@@ -132,6 +215,7 @@ export function useVoiceConversation() {
     releaseUrls();
     setMessages([]);
     setPriority("");
+    liveSegments.current.clear(); liveUsers.current.clear();
   }
   function selectPlan(value: PlanId) {
     reset();
@@ -164,6 +248,7 @@ export function useVoiceConversation() {
     setLanguage(value);
   }
   function toggleVoice() {
+    stopLive();
     voiceRef.current = !voiceRef.current;
     setVoice(voiceRef.current);
     if (!voiceRef.current) stopAudio();
@@ -177,6 +262,7 @@ export function useVoiceConversation() {
 
   async function play(id: string, urls: string[]) {
     if (locked.current || recorder.current) return;
+    stopLive();
     stopAudio();
     setNotice("");
     const version = playbackVersion.current;
@@ -195,6 +281,13 @@ export function useVoiceConversation() {
         return;
       }
       const audio = new Audio(urls[index]);
+      if (index === 0) audio.onplaying = () => {
+        const started = classicTurns.current.get(id);
+        if (started !== undefined) {
+          measurements.current.record("first_audible_response_estimate_ms", performance.now() - started, id, undefined, "classic");
+          classicTurns.current.delete(id);
+        }
+      };
       player.current = audio;
       audio.onended = () => {
         void next(index + 1);
@@ -228,6 +321,7 @@ export function useVoiceConversation() {
   async function prepareAudio(message: Message, gen = generation.current) {
     if (locked.current || recorder.current || gen !== generation.current)
       return;
+    stopLive();
     stopAudio();
     const version = playbackVersion.current;
     const controller = new AbortController();
@@ -274,7 +368,20 @@ export function useVoiceConversation() {
     text: string,
     options: { audio?: Blob; retryId?: string } = {},
   ) {
+    if (liveClient.current && liveState !== "off" && !options.audio) {
+      if (options.retryId) {
+        // Explicit retries use the existing validated HTTP recovery path.
+        stopLive();
+      } else { liveClient.current.text(text.trim()); return; }
+    }
     if (locked.current || (!text.trim() && !options.audio)) return;
+    if (options.retryId) {
+      const current = state.current.messages;
+      const index = current.findIndex(m => m.id === options.retryId && m.role === "user");
+      if (index < 0 || current.slice(index + 1).some(m => m.role === "user")) return;
+      const retained = current.slice(0, index + 1).map(m => m.id === options.retryId ? { ...m, completed: false, failed: false } : m);
+      state.current = { ...state.current, messages: retained }; setMessages(retained);
+    }
     stopAudio();
     setError("");
     setNotice("");
@@ -294,6 +401,7 @@ export function useVoiceConversation() {
       controller.signal,
       AbortSignal.timeout(30000),
     ]);
+    const classicStarted = performance.now();
     let userId = options.retryId;
     let question = text.trim();
     let answerMessage: Message | undefined;
@@ -305,6 +413,7 @@ export function useVoiceConversation() {
         const data = await post("/api/transcribe", form, signal);
         if (gen !== generation.current) return;
         question = data.transcript.trim();
+        measurements.current.record("stt.final_ms", performance.now() - classicStarted, undefined, undefined, "classic");
         if (!question) {
           setNotice(
             "No speech was detected. Try recording again or type a question.",
@@ -331,11 +440,13 @@ export function useVoiceConversation() {
       for (let i = 0; i < recent.length - 1; i++) {
         if (
           recent[i].role === "user" &&
+          !recent[i].failed &&
           recent[i].completed &&
           recent[i + 1].role === "assistant" &&
           recent[i + 1].completed
         )
-          history.push({ user: recent[i].text, assistant: recent[i + 1].text });
+          history.push({ user: recent[i].text, assistant: recent[i + 1].live && (recent[i + 1].interrupted || recent[i + 1].playedText !== recent[i + 1].text)
+            ? `${recent[i + 1].playedText || ""} [Response interrupted; do not assume the remaining text was heard.]` : recent[i + 1].text });
       }
       const data: Reply = await post(
         "/api/chat",
@@ -350,6 +461,7 @@ export function useVoiceConversation() {
         },
         signal,
       );
+      measurements.current.record("response.validated_ms", performance.now() - classicStarted, undefined, undefined, "classic");
       if (gen !== generation.current) return;
       answerMessage = {
         id: crypto.randomUUID(),
@@ -361,6 +473,7 @@ export function useVoiceConversation() {
         completed: true,
       };
       const completed = answerMessage;
+      classicTurns.current.set(completed.id, classicStarted);
       setMessages((ms) => [
         ...ms.map((m) =>
           m.id === userId ? { ...m, completed: true, failed: false } : m,
@@ -384,6 +497,7 @@ export function useVoiceConversation() {
   }
 
   async function microphone() {
+    stopLive();
     if (recorder.current?.state === "recording") {
       recorder.current.stop();
       clearTimers();
@@ -487,10 +601,11 @@ export function useVoiceConversation() {
     const controller = new AbortController();
     fetch("/api/status", { signal: controller.signal })
       .then((r) => r.json())
-      .then((data) => setConfigured(data.configured))
+      .then((data) => { setConfigured(data.configured); setLiveAvailable(Boolean(data.streaming)); })
       .catch(() => {});
     return () => {
       mounted.current = false;
+      liveClient.current?.stop();
       controller.abort();
       generation.current++;
       chain.current?.abort();
@@ -507,17 +622,17 @@ export function useVoiceConversation() {
     };
   }, []);
 
-  const processing = ["Transcribing", "Thinking"].includes(status);
+  const processing = ["Transcribing", "Thinking"].includes(status) || ["connecting", "reconnecting"].includes(liveState);
   return {
     planId,
     language,
     answerStyle,
     document,
     priority,
-    setPriority,
+    setPriority: (value: string) => { stopLive(); setPriority(value); },
     useDocument,
     correctTranscript,
-    selectAnswerStyle: setAnswerStyle,
+    selectAnswerStyle: (value: AnswerStyle) => { stopLive(); setAnswerStyle(value); },
     messages,
     status,
     error,
@@ -536,5 +651,13 @@ export function useVoiceConversation() {
     submit,
     prepareAudio,
     play,
+    liveState, liveAvailable, partialTranscript, startLive, stopLive,
+    finishLiveTurn: () => liveClient.current?.finish(),
+    exportMeasurements,
+    readMeasurements: () => measurements.current.export(),
+    recordVoiceReview: (scenario: string, result: string) => {
+      const last = state.current.messages.findLast(m => m.role === "assistant");
+      measurements.current.record(`review.${scenario}.${result}`, undefined, last?.id, undefined, last?.live ? "streaming" : "classic");
+    },
   };
 }

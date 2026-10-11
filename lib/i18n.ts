@@ -79,6 +79,18 @@ const en = {
   suggestions: "Suggested questions",
   question: "Your question",
   placeholder: "Type a question, or tap the microphone…",
+  secondaryPlaceholder: "Or type a question…",
+  liveConversation: "Live conversation",
+  startLive: "Start live conversation",
+  endLive: "End live conversation",
+  finishLiveTurn: "Finish my turn",
+  liveStatuses: {
+    connecting: "connecting",
+    listening: "listening",
+    thinking: "thinking",
+    speaking: "speaking",
+    reconnecting: "reconnecting",
+  },
   stopRecording: "Stop recording and submit",
   startRecording: "Start recording",
   stopSubmit: "Stop and submit",
@@ -198,6 +210,18 @@ const hi: typeof en = {
   suggestions: "सुझाए गए सवाल",
   question: "आपका सवाल",
   placeholder: "अपना सवाल लिखें या माइक दबाएँ…",
+  secondaryPlaceholder: "या अपना सवाल लिखें…",
+  liveConversation: "लाइव बातचीत",
+  startLive: "लाइव बातचीत शुरू करें",
+  endLive: "लाइव बातचीत बंद करें",
+  finishLiveTurn: "प्रश्न पूरा हुआ",
+  liveStatuses: {
+    connecting: "जुड़ रहा है",
+    listening: "सुन रहा है",
+    thinking: "उत्तर बना रहा है",
+    speaking: "बोल रहा है",
+    reconnecting: "फिर जुड़ रहा है",
+  },
   stopRecording: "रिकॉर्डिंग रोकें और भेजें",
   startRecording: "रिकॉर्डिंग शुरू करें",
   stopSubmit: "रोकें और भेजें",
@@ -302,6 +326,30 @@ export function sourceCopy(source: Source, language: Language) {
 }
 
 const messages: Record<string, string> = {
+  "Live conversation authentication failed. Please restart live conversation.":
+    "लाइव बातचीत का सत्यापन नहीं हो सका। कृपया लाइव बातचीत फिर शुरू करें।",
+  "Audio was too long. You can read the answer or request a shorter explanation.":
+    "आवाज़ वाला उत्तर बहुत लंबा था। जवाब पढ़ें या छोटा उत्तर माँगें।",
+  "The voice service could not verify the speech provider's secure connection. Restart the app with system certificates enabled; if it persists, check the server certificate configuration.":
+    "वॉइस सेवा प्रदाता के सुरक्षित कनेक्शन का प्रमाणपत्र सत्यापित नहीं कर सकी। सिस्टम प्रमाणपत्रों के साथ ऐप दोबारा शुरू करें। समस्या बनी रहे तो सर्वर के प्रमाणपत्रों की सेटिंग जाँचें।",
+  "The voice service could not connect to the speech provider. Check the server network and try again.":
+    "वॉइस सेवा का आवाज़ प्रदाता से संपर्क नहीं हो सका। सर्वर का नेटवर्क जाँचें और फिर कोशिश करें।",
+  "The live conversation session failed. Start a new conversation or use typing.":
+    "लाइव बातचीत का सत्र विफल हो गया। नई बातचीत शुरू करें या सवाल लिखें।",
+  "The voice service rejected this session. Restart the app and start a new live conversation.":
+    "वॉइस सेवा ने यह सत्र स्वीकार नहीं किया। ऐप दोबारा शुरू करें और नई लाइव बातचीत शुरू करें।",
+  "Could not start live conversation. Check microphone permission and the voice service, or use recording / typing.": "लाइव बातचीत शुरू नहीं हो सकी। माइक की अनुमति और वॉइस सेवा जाँचें, या रिकॉर्डिंग / लिखकर सवाल पूछें।",
+  "Live conversation disconnected. Use recording or typing, or start live conversation again.": "लाइव बातचीत का संपर्क टूट गया। रिकॉर्डिंग या लिखकर सवाल पूछें, या लाइव बातचीत फिर शुरू करें।",
+  "Reconnection failed. Please restart live conversation.": "दोबारा संपर्क नहीं हो सका। लाइव बातचीत फिर शुरू करें।",
+  "The live audio connection failed. Use recording or typing.": "लाइव आवाज़ का संपर्क टूट गया। रिकॉर्डिंग या लिखकर सवाल पूछें।",
+  "Audio could not keep up. Read the answer or use Listen to retry.": "आवाज़ समय पर नहीं चल सकी। जवाब पढ़ें या सुनें दबाकर फिर कोशिश करें।",
+  "Audio was interrupted. The accepted text remains available; use Listen to retry.": "आवाज़ बीच में रुक गई। जाँचा हुआ जवाब उपलब्ध है; सुनें दबाकर फिर कोशिश करें।",
+  "The response did not finish. You can read the accepted portion or retry your question.": "जवाब पूरा नहीं हुआ। जाँचा हुआ हिस्सा पढ़ें या सवाल फिर भेजें।",
+  "Transcription disconnected. Restart live conversation or use typing.": "लिप्यंतरण का संपर्क टूट गया। लाइव बातचीत फिर शुरू करें या सवाल लिखें।",
+  "Transcription connection failed. Please restart live conversation.": "लिप्यंतरण का संपर्क नहीं हो सका। लाइव बातचीत फिर शुरू करें।",
+  "Live conversation expired. Start a new conversation to continue.": "लाइव बातचीत का समय समाप्त हुआ। जारी रखने के लिए फिर शुरू करें।",
+  "Session turn limit reached. Start a new live conversation.": "इस बातचीत में सवालों की सीमा पूरी हुई। नई लाइव बातचीत शुरू करें।",
+  "Please ask a shorter question.": "कृपया छोटा सवाल पूछें।",
   "The answer could not be verified. Please retry your question.":
     "जवाब की पुष्टि नहीं हो सकी। कृपया सवाल फिर भेजें।",
   "Something went wrong. Please retry.":

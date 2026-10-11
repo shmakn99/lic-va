@@ -7,28 +7,36 @@
     "node": "24.x"
   },
   "scripts": {
-    "dev": "next dev --hostname 127.0.0.1",
+    "dev": "node scripts/run-app.mjs dev",
+    "dev:web": "node --use-system-ca node_modules/next/dist/bin/next dev --hostname 127.0.0.1",
+    "voice:server": "node --use-system-ca --env-file-if-exists=.env.local --import tsx server/voice.ts",
+    "smoke:streaming": "node --use-system-ca --env-file-if-exists=.env.local --import tsx scripts/streaming-smoke.ts",
+    "voice:report": "tsx scripts/voice-report.ts",
     "build": "node scripts/build-presentation.mjs && next build",
     "build:presentation": "node scripts/build-presentation.mjs",
-    "start": "next start --hostname 127.0.0.1",
+    "check:build": "node scripts/check-build.mjs",
+    "start": "node scripts/run-app.mjs start",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts",
     "test:browser": "playwright test",
-    "smoke": "tsx --env-file=.env.local scripts/provider-smoke.ts",
+    "smoke": "node --use-system-ca --env-file=.env.local --import tsx scripts/provider-smoke.ts",
     "rehearse:sales": "tsx scripts/rehearse-sales.ts"
   },
   "dependencies": {
+    "@vercel/functions": "3.9.11",
     "next": "16.3.8",
     "react": "19.3.0",
     "react-dom": "19.3.0",
+    "ws": "^8.22.0",
     "zod": "4.3.6"
   },
   "devDependencies": {
+    "@playwright/test": "1.63.0",
     "@types/node": "24.19.1",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
-    "typescript": "7.0.2",
+    "@types/ws": "^8.18.2",
     "tsx": "4.23.15",
-    "@playwright/test": "1.63.0"
+    "typescript": "7.0.2"
   }
 }

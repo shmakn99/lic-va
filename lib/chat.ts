@@ -31,9 +31,8 @@ export const chatSchema = z
       .default([]),
   })
   .strict();
-export async function chat(
+export async function prepareChat(
   input: z.infer<typeof chatSchema>,
-  signal: AbortSignal,
 ) {
   const knowledge = input.document
     ? documentKnowledge(input.document)
@@ -62,10 +61,10 @@ export async function chat(
       }),
       sources,
     );
-    return {
+    return { sources, messages: [], introduction: {
       ...answer,
       sources: sources.filter((s) => answer.sourceIds.includes(s.id)),
-    };
+    } };
   }
   const reminders = input.document ? "Use only this supplied document for this product's facts, including its claims procedure and validity rules. Missing product terms must stay unknown. General insurance concepts may still be explained using established knowledge; do not apply an industry practice to this product without document support." : {
     "new-jeevan-anand":
@@ -145,6 +144,12 @@ Simplify wording only: preserve all relevant facts, amounts, dates, eligibility 
     ]),
     { role: "user", content: question },
   ];
+  return { sources, messages, introduction: undefined };
+}
+
+export async function chat(input: z.infer<typeof chatSchema>, signal: AbortSignal) {
+  const { sources, messages, introduction } = await prepareChat(input);
+  if (introduction) return introduction;
   for (let attempt = 0; attempt < 2; attempt++) {
     const result = (await sarvam(
       "/v1/chat/completions",

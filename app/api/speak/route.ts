@@ -34,6 +34,9 @@ export async function POST(request: Request) {
         502,
         "Audio was unavailable. You can read the answer or retry audio.",
       );
+    // Leave room under Vercel's 4.5 MB response limit, including JSON overhead.
+    if (result.audios.reduce((bytes, audio) => bytes + Buffer.byteLength(audio), 0) > 4_000_000)
+      throw new ApiError(502, "Audio was too long. You can read the answer or request a shorter explanation.");
     return Response.json({ audios: result.audios, mimeType: "audio/wav" });
   } catch (error) {
     return errorResponse(error);

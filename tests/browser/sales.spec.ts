@@ -33,7 +33,7 @@ test("custom pitches and follow-ups keep priority/context, show excerpts and sen
   await expect(page.getByText("Supported answer 1.", { exact: true })).toBeVisible();
   await expect.poll(() => speech.length).toBe(1);
   expect(speech[0]).toBe("Supported answer 1.");
-  await page.locator("summary").click();
+  await page.locator(".answer-controls summary").click();
   await expect(page.locator(".source-excerpt")).toHaveText(documentText);
   await expect(page.locator(".answer-controls a")).toHaveCount(0);
   await page.getByRole("button", { name: "How do claims work?", exact: true }).click();

@@ -1140,3 +1140,79 @@ html:lang(hi) strong {
     transition: none !important;
   }
 }
+.live-controls {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 24px;
+  padding: 4px 0 18px;
+}
+.live-action {
+  flex-direction: column;
+  gap: 9px;
+  width: 160px;
+  max-width: calc((100% - 24px) / 2);
+  padding: 0;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  color: var(--teal);
+}
+.live-action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--teal);
+  color: #fff;
+  box-shadow: 0 0 0 5px var(--teal-soft);
+  transition: background .15s, box-shadow .15s;
+}
+.live-start:hover:not(:disabled) .live-action-icon {
+  background: #11645c;
+  box-shadow: 0 0 0 7px var(--teal-soft);
+}
+.live-end { color: #b43d44; }
+.live-end .live-action-icon {
+  background: #c44950;
+  box-shadow: 0 0 0 5px #fceef0;
+}
+.live-end:hover .live-action-icon { background: #ac353d; }
+.live-finish { color: #315eb4; }
+.live-finish .live-action-icon {
+  width: 48px;
+  height: 48px;
+  margin: 8px 0;
+  background: #376ac3;
+  box-shadow: 0 0 0 4px #edf3ff;
+}
+.live-finish:hover:not(:disabled) .live-action-icon { background: #2857a9; }
+.live-primary .suggestions { justify-content: center; margin-bottom: 10px; }
+.live-primary .suggestions button {
+  background: #fff;
+  border-color: var(--line);
+  color: var(--muted);
+}
+.live-primary .suggestions button:hover:not(:disabled) {
+  background: var(--soft);
+  color: var(--ink);
+}
+.live-primary .composer { padding: 4px 8px; background: #fff; }
+.live-primary .mic-button:not(.is-recording) {
+  background: transparent;
+  border-color: transparent;
+  color: var(--muted);
+}
+.live-primary .mic-button:hover:not(:disabled):not(.is-recording) { background: var(--soft); }
+.voice-tracking { font-size: .75rem; margin: 1rem 0; padding: 1rem; border: 1px solid var(--line); border-radius: 12px; background: white; color: var(--muted); }
+.voice-tracking summary { cursor: pointer; }
+.voice-tracking p { margin: .5rem 0; }
+.measurement-table { max-height: 180px; overflow: auto; }
+.measurement-table table { border-collapse: collapse; width: 100%; }
+.measurement-table th, .measurement-table td { text-align: left; padding: .25rem .4rem; border-bottom: 1px solid #e0e8e3; }
+.voice-tracking select { max-width: 100%; padding: .3rem; }
