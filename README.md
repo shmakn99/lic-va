@@ -61,8 +61,10 @@ The microphone stream is stopped before transcription. MediaRecorder produces a 
 | ------------- | ---------------------------------------------------------------- |
 | Chat          | `sarvam-105b-conversations`, reasoning disabled, JSON schema response |
 | Transcription | `saaras:v4`, transcribe mode, automatic language detection       |
-| Speech        | `bulbul:v3`, `shubh`, pace 1, WAV, 24 kHz                        |
+| Speech        | `bulbul:v4-flash`, `shubh_enhi_ads`, pace 1, WAV, 24 kHz         |
 | Browser input | Completed native MediaRecorder file → normalized MIME → upload |
+
+Both turn-based and live conversations use Bulbul V4 Flash. Live conversation streams raw PCM at 24 kHz over WebSocket. See the [migration checks and rollback instructions](docs/tts-v4-flash.md). Run `npm run smoke:tts` to check both TTS paths against the configured provider.
 
 Live smoke tests passed for text, English/Hindi TTS and transcription. The browser voice test uses synthetic speech through a real browser MediaRecorder; a person must still check physical microphone quality and audible playback on the presentation device. This distinction matters: generated test speech does not prove a particular microphone works.
 

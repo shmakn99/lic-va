@@ -11,6 +11,7 @@
     "dev:web": "node --use-system-ca node_modules/next/dist/bin/next dev --hostname 127.0.0.1",
     "voice:server": "node --use-system-ca --env-file-if-exists=.env.local --import tsx server/voice.ts",
     "smoke:streaming": "node --use-system-ca --env-file-if-exists=.env.local --import tsx scripts/streaming-smoke.ts",
+    "smoke:tts": "node --use-system-ca --env-file-if-exists=.env.local --import tsx scripts/tts-smoke.ts",
     "voice:report": "tsx scripts/voice-report.ts",
     "build": "node scripts/build-presentation.mjs && next build",
     "build:presentation": "node scripts/build-presentation.mjs",

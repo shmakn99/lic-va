@@ -86,7 +86,7 @@ The repository does not identify the active Vercel plan, Fluid Compute setting, 
 
 [Vercel's concurrency documentation](https://vercel.com/docs/functions/concurrency-scaling) lists automatic scaling up to 30,000 concurrent executions on Hobby/Pro and 100,000 on Enterprise, with a burst scaling limit of 1,000 executions per 10 seconds per region. Scaling is not instantaneous. These are platform ceilings, not chatbot-user commitments.
 
-[Sarvam's published rate limits](https://docs.sarvam.ai/api/getting-started/ratelimits) list the following for the models/endpoints this app uses. Limits are shared per account, not multiplied by making extra API keys:
+[Sarvam's published rate limits](https://docs.sarvam.ai/api/getting-started/ratelimits) were used for the original V3 planning figures below. The app migrated to [Bulbul V4 Flash](../tts-v4-flash.md) on 16 October 2026; verify V4 account quotas before reusing the TTS figures or speech-session estimates. Limits are shared per account, not multiplied by making extra API keys:
 
 | Sarvam tier | 105B conversations LLM/min | REST STT/min | Bulbul v3 REST TTS/min |
 | --- | ---: | ---: | ---: |

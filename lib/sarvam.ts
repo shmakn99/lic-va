@@ -1,10 +1,14 @@
 import { ApiError } from "./http";
-export const settings = () => ({
-  chat: process.env.SARVAM_CHAT_MODEL || "sarvam-105b-conversations",
-  stt: process.env.SARVAM_STT_MODEL || "saaras:v4",
-  tts: process.env.SARVAM_TTS_MODEL || "bulbul:v3",
-  voice: process.env.SARVAM_VOICE || "shubh",
-});
+export const settings = () => {
+  const tts = process.env.SARVAM_TTS_MODEL || "bulbul:v4-flash";
+  return {
+    chat: process.env.SARVAM_CHAT_MODEL || "sarvam-105b-conversations",
+    stt: process.env.SARVAM_STT_MODEL || "saaras:v4",
+    tts,
+    // V4 requires a persona ID; retain the V3 default for explicit rollbacks.
+    voice: process.env.SARVAM_VOICE || (tts === "bulbul:v4-flash" ? "shubh_enhi_ads" : "shubh"),
+  };
+};
 export async function sarvam(
   path: string,
   body: object | FormData,

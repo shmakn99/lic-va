@@ -33,14 +33,16 @@ Set these in Vercel before deploying. Configure Production and, if preview deplo
 | `SARVAM_API_KEY` | Yes for live features | Server-only Sarvam credential with model access and credits |
 | `SARVAM_CHAT_MODEL` | No | `sarvam-105b-conversations` |
 | `SARVAM_STT_MODEL` | No | `saaras:v4` |
-| `SARVAM_TTS_MODEL` | No | `bulbul:v3` |
-| `SARVAM_VOICE` | No | `shubh` |
+| `SARVAM_TTS_MODEL` | No | `bulbul:v4-flash` |
+| `SARVAM_VOICE` | No | `shubh_enhi_ads` (V4 persona ID) |
 | `VOICE_STREAMING_ENABLED` | Yes for live conversation | `true` |
 | `VOICE_SESSION_SECRET` | Yes for live conversation | Generate a random secret of at least 32 characters; do not commit it |
 | `VOICE_PUBLIC_URL` | Leave unset on Vercel | Automatically uses `wss://<current-origin>/api/voice/socket`; never copy the localhost value to Vercel |
 | `VOICE_ALLOWED_ORIGINS` | Optional | Unset: same-origin only on Vercel, including previews. Production-only restriction: `https://lic-va.vercel.app` |
 | `VOICE_MAX_SESSIONS` | No | `10` per function instance, not a global quota |
 | `VOICE_VALIDATION_MODE` | No | `segments`; use `whole` to validate a complete answer before streaming audio |
+
+For an existing deployment, update **both** `SARVAM_TTS_MODEL=bulbul:v4-flash` and `SARVAM_VOICE=shubh_enhi_ads`, then redeploy. Existing environment overrides take precedence over the new defaults. Apply the same pair to a separately hosted voice server and restart it. V3 short speaker names such as `shubh` are incompatible with V4 Flash. See [migration validation and rollback](tts-v4-flash.md).
 
 On an unrestricted device, open the existing **lic-va** Vercel project:
 
